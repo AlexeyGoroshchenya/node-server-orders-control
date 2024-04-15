@@ -25,9 +25,9 @@ class UserController {
                         return next(ApiError.badRequest('проверьте имя, телефон и пароль'))
                 }
 
-                if (role !== 'ADMIN' || role !== 'OPERATOR' || role !== 'USER') {
-                        return next(ApiError.badRequest('проверьте роль пользователя'))
-                }
+                // if (role !== 'ADMIN' || role !== 'OPERATOR' || role !== 'USER') {
+                //         return next(ApiError.badRequest('проверьте роль пользователя'))
+                // }
 
                 try {
 
