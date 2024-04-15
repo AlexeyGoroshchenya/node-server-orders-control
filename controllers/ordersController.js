@@ -1,7 +1,9 @@
+require('dotenv').config()
 const ApiError = require('../error/ApiError')
 const { Order, User } = require('../models/models')
 const statuses = require('../statuses')
 var smsc = require('../smsc/smsc_api.js');
+
 
 class OrdersController {
 
@@ -62,6 +64,7 @@ class OrdersController {
   async changeOrder(req, res, next) {
     const { orderId, status, description } = req.body
 
+
     try {
 
       if (!orderId) return next(ApiError.internal('заказ с таким id не найден'))
@@ -91,7 +94,7 @@ class OrdersController {
         //отправить смс
         const newStatus = statuses.find(item => item.name === status)
 
-        let message = newStatus.message
+        let message = newStatus.message //+ ' Перейти в личный кабинет: ' + process.env.LOGIN_LINK
 
         smsc.send_sms({
           phones: [`${user.phone}`],
@@ -110,7 +113,7 @@ class OrdersController {
               if (err) return console.log(err, 'code: ' + code);
               console.log(status);
             });
-          }, 10000
+          }, 60000
           )
 
         });
@@ -127,7 +130,10 @@ class OrdersController {
 
     try {
       const { userId } = req.query
-      const orders = await Order.findAll({ where: { userId: userId } })
+      const orders = await Order.findAll({
+         where: { userId: userId },
+         attributes: ['car', 'model', 'year', 'capacity', 'drive', 'type', 'status']
+        })
 
       if (orders.length === 0) return next(ApiError.badRequest('заказы пользователя не найдены'))
 

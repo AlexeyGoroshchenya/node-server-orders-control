@@ -119,7 +119,7 @@ class UserController {
 
                         smsc.send_sms({
                                 phones: [phone],
-                                mes: message
+                                mes: 'Ваш код:' + message
                         }, function (data, raw, err, code) {
                                 if (err) return console.log(err, 'code: ' + code);
                                 console.log(data); // object
@@ -141,7 +141,7 @@ class UserController {
                                 )
                         });
 
-                        return res.json({ result: 'ok' })
+                        return res.json({ result: message })
 
                 } catch (error) {
                         return next(ApiError.internal('ошибка назначения временного пароля: ' + error))
