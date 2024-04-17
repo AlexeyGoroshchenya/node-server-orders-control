@@ -177,14 +177,16 @@ class OrdersController {
 
   
   async getByStatus(req, res, next) {
-    const { status } = req.query
+    const { status, limit = 10, page = 1 } = req.query
+    let offset = page * limit - limit
+
 
     try {
       
-      const orders = await Order.findAll({
-        where: { status: status },
+      const orders = await Order.findAndCountAll({where: {status}, limit, offset })
+        
         // attributes: ['car', 'model', 'year', 'capacity', 'drive', 'type', 'status']
-      })
+      
 
       if (orders.length === 0) return next(ApiError.badRequest('заказы c таким статусом не найдены'))
 
