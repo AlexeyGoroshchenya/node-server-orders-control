@@ -11,8 +11,8 @@ router.post('/create', checkRole('OPERATOR'), ordersController.createOrder)
 router.get('/allOrders', checkRole('ADMIN'), ordersController.getAllOrders)
 router.get('/getById', authMiddleware, ordersController.getById)
 router.get('/getByUserId', authMiddleware, ordersController.getByUserId)
-router.get('/getByUserPhone', ordersController.getByUserPhone)
-router.get('/getByStatus', ordersController.getByStatus)
+router.get('/getByUserPhone', authMiddleware, ordersController.getByUserPhone)
+router.get('/getByStatus', authMiddleware, ordersController.getByStatus)
 
 router.put('/', checkRole('OPERATOR'), ordersController.changeOrder)
 

@@ -13,7 +13,7 @@ class OrdersController {
     //проверка телефона на формат?
 
 
-    if (!phone || !car || !model) return next(ApiError.badRequest('проверьте данные запроса'))
+    if (!phone || !car || !model) return next(ApiError.badRequest({message: 'проверьте данные запроса'}))
 
     let userPhone = Number(phone)
     if (phone[0] === '+') userPhone = Number(phone.slice(1))
@@ -24,7 +24,7 @@ class OrdersController {
       try {
         user = await User.create({ name: 'Пользователь', phone: userPhone, password: password })
       } catch (error) {
-        return next(ApiError.internal('ошибка создания заказа: ' + error.message))
+        return next(ApiError.internal({message: 'ошибка создания заказа', error: error.message}))
       }
     }
 
@@ -32,7 +32,7 @@ class OrdersController {
       const order = await Order.create({ car: car, model: model, year: year, capacity: capacity, drive: drive, type: type, status: statuses[0].name, description: description, userId: user.id })
       return res.json({ order })
     } catch (error) {
-      return next(ApiError.internal('ошибка создания заказа: ' + error.message))
+      return next(ApiError.internal({message: 'ошибка создания заказа', error: error.message}))
     }
   }
 
@@ -46,7 +46,7 @@ class OrdersController {
 
       return res.json(orders)
     } catch (error) {
-      return next(ApiError.internal('ошибка получения заказов: ' + error.message))
+      return next(ApiError.internal({message: 'ошибка получения заказов', error: error.message}))
     }
   }
 
@@ -60,11 +60,11 @@ class OrdersController {
         attributes: ['car', 'model', 'year', 'capacity', 'drive', 'type', 'status']
       })
 
-      if (!order) return next(ApiError.badRequest('заказ с таким id не найден'))
+      if (!order) return next(ApiError.badRequest({message: 'заказ с таким id не найден'}))
 
       return res.json(order)
     } catch (error) {
-      return next(ApiError.internal('ошибка получения заказов: ' + error.message))
+      return next(ApiError.internal({message: 'ошибка получения заказов', error: error.message}))
     }
   }
 
@@ -74,9 +74,9 @@ class OrdersController {
 
     try {
 
-      if (!orderId) return next(ApiError.internal('заказ с таким id не найден'))
+      if (!orderId) return next(ApiError.badRequest({message: 'заказ с таким id не найден'}))
 
-      if (!status && !description) return next(ApiError.internal('проверьте сведения, которые нужно обновить'))
+      if (!status && !description) return next(ApiError.badRequest({message: 'проверьте сведения, которые нужно обновить'}))
 
       const order = await Order.findOne(
         {
@@ -128,7 +128,7 @@ class OrdersController {
 
       return res.json(order)
     } catch (error) {
-      return next(ApiError.internal('ошибка обновления сведений: ' + error.message))
+      return next(ApiError.internal({message: 'ошибка обновления сведений', error: error.message}))
     }
 
   }
@@ -142,11 +142,11 @@ class OrdersController {
         attributes: ['car', 'model', 'year', 'capacity', 'drive', 'type', 'status']
       })
 
-      if (orders.length === 0) return next(ApiError.badRequest('заказы пользователя не найдены'))
+      if (orders.length === 0) return next(ApiError.badRequest({message: 'заказы пользователя не найдены'}))
 
       return res.json(orders)
     } catch (error) {
-      return next(ApiError.internal('ошибка получения заказов: ' + error.message))
+      return next(ApiError.internal({message: 'ошибка получения заказов', error: error.message}))
     }
   }
 
@@ -154,7 +154,7 @@ class OrdersController {
 
     const { phone } = req.query
 
-    if (!phone) return next(ApiError.badRequest('проверьте данные запроса'))
+    if (!phone) return next(ApiError.badRequest({message: 'проверьте данные запроса'}))
     let userPhone = Number(phone)
     if (phone[0] === '+') userPhone = Number(phone.slice(1))
 
@@ -162,16 +162,16 @@ class OrdersController {
       const user = await User.findOne({ where: { phone: Number(userPhone) } })
 
       if (!user) {
-        return next(ApiError.badRequest('пользователь с таким номером телефона не найден'))
+        return next(ApiError.badRequest({message: 'пользователь с таким номером телефона не найден'}))
       }
 
       const orders = await Order.findAll({ where: { userId: user.id } })
 
-      if (orders.length === 0) return next(ApiError.badRequest('заказы пользователя не найдены'))
+      if (orders.length === 0) return next(ApiError.badRequest({message: 'заказы пользователя не найдены'}))
 
       return res.json(orders)
     } catch (error) {
-      return next(ApiError.internal('ошибка получения заказов: ' + error.message))
+      return next(ApiError.internal({message: 'ошибка получения заказов', error: error.message}))
     }
   }
 
@@ -188,11 +188,11 @@ class OrdersController {
         // attributes: ['car', 'model', 'year', 'capacity', 'drive', 'type', 'status']
       
 
-      if (orders.length === 0) return next(ApiError.badRequest('заказы c таким статусом не найдены'))
+      if (orders.rows.length === 0) return next(ApiError.badRequest({message: 'заказы c таким статусом не найдены'}))
 
       return res.json(orders)
     } catch (error) {
-      return next(ApiError.internal('ошибка получения заказов: ' + error.message))
+      return next(ApiError.internal({message: 'ошибка получения заказов', error: error.message}))
     }
   }
 
