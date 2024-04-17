@@ -16,7 +16,9 @@ POST
 получение всех заказов 
 эндпоинт http://localhost:5000/api/order/allOrders
 GET
-ожидается токен админа
+ожидается токен админа и в query 
+limit: number
+page: number
 
 получение заказа по id заказа
 эндпоинт http://localhost:5000/api/order/getById
@@ -56,7 +58,7 @@ http://localhost:5000/api/user/registration
 POST
 ожидается токен админа и в body:
 name: string,
- phone: number,
+ phone: number, (в международном формате например 74955082210)
  password: string,
  role: string (значения ADMIN, OPERATOR или USER)
 
@@ -86,6 +88,18 @@ http://localhost:5000/api/user/delete
 DELETE
 ожидается токен админа в body:
  id: number (id пользователя)
+
+получение всех пользователей
+http://localhost:5000/api/user/getAll
+GET
+ожидается токен админа и в query 
+limit: number
+page: number
+
+получение пользователя по id
+http://localhost:5000/api/user/getUserByID
+GET
+ожидается токен админа и в query id
 
 
 ******************************************

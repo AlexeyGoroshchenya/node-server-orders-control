@@ -37,8 +37,12 @@ class OrdersController {
   }
 
   async getAllOrders(req, res, next) {
+
+    let { limit = 10, page = 1 } = req.query
+    let offset = page * limit - limit
+
     try {
-      const orders = await Order.findAll()
+      const orders = await Order.findAndCountAll({ limit, offset })
 
       return res.json(orders)
     } catch (error) {
@@ -51,7 +55,10 @@ class OrdersController {
     try {
 
       const { id } = req.query
-      const order = await Order.findOne({ where: { id } })
+      const order = await Order.findOne({
+        where: { id },
+        attributes: ['car', 'model', 'year', 'capacity', 'drive', 'type', 'status']
+      })
 
       if (!order) return next(ApiError.badRequest('заказ с таким id не найден'))
 
@@ -131,9 +138,9 @@ class OrdersController {
     try {
       const { userId } = req.query
       const orders = await Order.findAll({
-         where: { userId: userId },
-         attributes: ['car', 'model', 'year', 'capacity', 'drive', 'type', 'status']
-        })
+        where: { userId: userId },
+        attributes: ['car', 'model', 'year', 'capacity', 'drive', 'type', 'status']
+      })
 
       if (orders.length === 0) return next(ApiError.badRequest('заказы пользователя не найдены'))
 
@@ -161,6 +168,25 @@ class OrdersController {
       const orders = await Order.findAll({ where: { userId: user.id } })
 
       if (orders.length === 0) return next(ApiError.badRequest('заказы пользователя не найдены'))
+
+      return res.json(orders)
+    } catch (error) {
+      return next(ApiError.internal('ошибка получения заказов: ' + error.message))
+    }
+  }
+
+  
+  async getByStatus(req, res, next) {
+    const { status } = req.query
+
+    try {
+      
+      const orders = await Order.findAll({
+        where: { status: status },
+        // attributes: ['car', 'model', 'year', 'capacity', 'drive', 'type', 'status']
+      })
+
+      if (orders.length === 0) return next(ApiError.badRequest('заказы c таким статусом не найдены'))
 
       return res.json(orders)
     } catch (error) {

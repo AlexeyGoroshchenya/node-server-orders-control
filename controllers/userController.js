@@ -21,13 +21,15 @@ class UserController {
 
                 const { name, phone, password, role } = req.body
 
+                const allowedRoles = ['ADMIN', 'OPERATOR', 'USER']
+
                 if (!name || !phone || !password) {
                         return next(ApiError.badRequest('проверьте имя, телефон и пароль'))
                 }
 
-                // if (role !== 'ADMIN' || role !== 'OPERATOR' || role !== 'USER') {
-                //         return next(ApiError.badRequest('проверьте роль пользователя'))
-                // }
+                if (!role || !allowedRoles.includes(role)) {
+                        return next(ApiError.badRequest('проверьте роль пользователя'))
+                }
 
                 try {
 
@@ -58,6 +60,7 @@ class UserController {
                         }
 
                         let comparePassword = bcrypt.compareSync(password, user.password)
+
                         if (!comparePassword) {
                                 return next(ApiError.badRequest('неправильный пароль'))
                         }
@@ -88,6 +91,35 @@ class UserController {
                 }
         }
 
+        async getAll(req, res, next) {
+
+                let {limit = 10, page = 1} = req.query
+                let offset = page*limit - limit
+
+                try {
+                        const users = await User.findAndCountAll({limit, offset})
+
+                        return res.json({ users })
+                } catch (error) {
+                        return next(ApiError.internal('ошибка получения пользователей: ' + error))
+                }
+        }
+
+        async getUserByID(req, res, next) {
+
+                const { id } = req.query
+                if (!id) return next(ApiError.badRequest('проверьте данные id'))
+
+                try {
+                        const user = await User.findByPk(id)
+
+                        return res.json({ user })
+                } catch (error) {
+                        return next(ApiError.internal('ошибка получения пользователя: ' + error))
+                }
+        }
+
+
         async deleteUser(req, res, next) {
 
                 const { id } = req.body
@@ -116,6 +148,8 @@ class UserController {
 
                 try {
                         user = await User.findOne({ where: { phone } })
+                        user.password = `${hashPassword}`
+                        user.save()
 
                         smsc.send_sms({
                                 phones: [phone],
@@ -125,8 +159,6 @@ class UserController {
                                 console.log(data); // object
                                 console.log(raw); // string in JSON format
 
-                                user.password = `${hashPassword}`
-                                user.save()
 
                                 setTimeout(() => {
                                         smsc.get_status({
