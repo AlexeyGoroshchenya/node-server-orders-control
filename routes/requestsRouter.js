@@ -8,16 +8,16 @@ const router = new Router()
 
 router.post('/create', requestsController.createRequest)
 
-// checkRole('ADMIN'), 
-router.get('/allRequests', requestsController.getAllRequests)
 
-// checkRole('OPERATOR'),  
-router.get('/getById', requestsController.getById)
-router.get('/getByUserPhone', requestsController.getByUserPhone)
-router.get('/getByStatus', requestsController.getByStatus)
+router.get('/allRequests',  checkRole('OPERATOR'),  requestsController.getAllRequests)
 
-// checkRole('OPERATOR'), 
-router.put('/', requestsController.changeRequest)
+
+router.get('/getById',  checkRole('OPERATOR'),  requestsController.getById)
+router.get('/getByUserPhone',  checkRole('OPERATOR'),  requestsController.getByUserPhone)
+router.get('/getByStatus',  checkRole('OPERATOR'),  requestsController.getByStatus)
+
+
+router.put('/',  checkRole('OPERATOR'),  requestsController.changeRequest)
 
 
 
