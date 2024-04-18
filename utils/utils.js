@@ -7,7 +7,7 @@ const generatePassword = ()=>{
         let randomNumber = Math.floor(Math.random() * chars.length);
         password += chars.substring(randomNumber, randomNumber +1);
        }
-
+console.log(password);
        return password
 }
 

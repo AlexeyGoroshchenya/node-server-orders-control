@@ -22,30 +22,23 @@ const Order = sequelize.define('order', {
     description: {type: DataTypes.STRING(1000), allowNull: false}   
 })
 
-// const Status = sequelize.define('status', {
-//     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-//     name: {type: DataTypes.STRING, allowNull: false},
-//     description: {type: DataTypes.STRING, allowNull: true},
-// })
-
-
-
-
-
-
-
+const Request = sequelize.define('request', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING, allowNull: false},
+    phone: {type: DataTypes.BIGINT, allowNull: false},
+    date: {type: DataTypes.STRING, allowNull: false},
+    time: {type: DataTypes.STRING, allowNull: false},
+    handled: {type: DataTypes.BOOLEAN, allowNull: true},
+})
 
 
 User.hasMany(Order)
 Order.belongsTo(User)
 
 
-
-
-
-
 module.exports = {
 
     User,
-    Order
+    Order,
+    Request
 }
