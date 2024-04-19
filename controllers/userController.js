@@ -24,18 +24,18 @@ class UserController {
                 const allowedRoles = ['ADMIN', 'OPERATOR', 'USER']
 
                 if (!name || !phone || !password) {
-                        return next(ApiError.badRequest({message:'проверьте имя, телефон и пароль'}))
+                        return next(ApiError.badRequest({ message: 'проверьте имя, телефон и пароль' }))
                 }
 
                 if (!role || !allowedRoles.includes(role)) {
-                        return next(ApiError.badRequest({message:'проверьте роль пользователя'}))
+                        return next(ApiError.badRequest({ message: 'проверьте роль пользователя' }))
                 }
 
                 try {
 
                         const candidate = await User.findOne({ where: { phone } })
                         if (candidate) {
-                                return next(ApiError.badRequest({message:'пользователь с таким номером уже зарегистрирован'}))
+                                return next(ApiError.badRequest({ message: 'пользователь с таким номером уже зарегистрирован' }))
                         }
 
                         const hashPassword = await bcrypt.hash(password, 5)
@@ -46,7 +46,7 @@ class UserController {
 
                         return res.json({ token })
                 } catch (error) {
-                        return next(ApiError.internal({message: 'ошибка создания пользователя', error: error.message}))
+                        return next(ApiError.internal({ message: 'ошибка создания пользователя', error: error.message }))
                 }
         }
 
@@ -56,13 +56,13 @@ class UserController {
                 try {
                         const user = await User.findOne({ where: { phone } })
                         if (!user) {
-                                return next(ApiError.badRequest( {message:'пользователь не найден'}))
+                                return next(ApiError.badRequest({ message: 'пользователь не найден' }))
                         }
 
                         let comparePassword = bcrypt.compareSync(password, user.password)
 
                         if (!comparePassword) {
-                                return next(ApiError.badRequest({message:'неправильный пароль'}))
+                                return next(ApiError.badRequest({ message: 'неправильный пароль' }))
                         }
                         const token = generateGWT(user.id, user.phone, user.role)
 
@@ -74,7 +74,7 @@ class UserController {
 
                         return res.json({ token })
                 } catch (error) {
-                        return next(ApiError.internal({message: 'ошибка авторизации', error: error.message}))
+                        return next(ApiError.internal({ message: 'ошибка авторизации', error: error.message }))
                 }
 
         }
@@ -87,35 +87,49 @@ class UserController {
                         const token = generateGWT(req.user.id, req.user.phone, req.user.role)
                         return res.json({ token })
                 } catch (error) {
-                        return next(ApiError.internal({message: 'пользователь не авторизован', error: error.message}))
+                        return next(ApiError.internal({ message: 'пользователь не авторизован', error: error.message }))
                 }
         }
 
         async getAll(req, res, next) {
 
-                let {limit = 10, page = 1} = req.query
-                let offset = page*limit - limit
+                let { limit = 10, page = 1 } = req.query
+                let offset = page * limit - limit
 
                 try {
-                        const users = await User.findAndCountAll({limit, offset})
+                        const users = await User.findAndCountAll({ limit, offset })
 
                         return res.json({ users })
                 } catch (error) {
-                        return next(ApiError.internal({message: 'ошибка получения пользователя', error: error.message}))
+                        return next(ApiError.internal({ message: 'ошибка получения пользователя', error: error.message }))
                 }
         }
+
+        async getByRole(req, res, next) {
+
+                let { limit = 10, page = 1, role } = req.query
+                let offset = page * limit - limit
+
+                try {
+                        const users = await User.findAndCountAll({where: {role}, limit, offset })
+
+                        return res.json({ users })
+                } catch (error) {
+                        return next(ApiError.internal({ message: 'ошибка получения пользователя', error: error.message }))
+                }
+        }        
 
         async getUserByID(req, res, next) {
 
                 const { id } = req.query
-                if (!id) return next(ApiError.badRequest({message:'проверьте данные id'}))
+                if (!id) return next(ApiError.badRequest({ message: 'проверьте данные id' }))
 
                 try {
                         const user = await User.findByPk(id)
 
                         return res.json({ user })
                 } catch (error) {
-                        return next(ApiError.internal({message: 'ошибка получения пользователя', error: error.message}))
+                        return next(ApiError.internal({ message: 'ошибка получения пользователя', error: error.message }))
                 }
         }
 
@@ -123,7 +137,7 @@ class UserController {
         async deleteUser(req, res, next) {
 
                 const { id } = req.body
-                if (!id) return next(ApiError.badRequest({message:'проверьте данные id'}))
+                if (!id) return next(ApiError.badRequest({ message: 'проверьте данные id' }))
 
                 try {
                         await User.destroy({
@@ -134,20 +148,34 @@ class UserController {
 
                         return res.json({ result: "ok" })
                 } catch (error) {
-                        return next(ApiError.internal({message: 'ошибка удаления пользователя', error: error.message}))
+                        return next(ApiError.internal({ message: 'ошибка удаления пользователя', error: error.message }))
                 }
         }
 
         async sendPassword(req, res, next) {
                 const { phone } = req.body
                 const message = Math.ceil(Math.random() * 1000000)
-
                 const hashPassword = await bcrypt.hash(`${message}`, 5)
+
+                let userPhone = Number(phone)
+                if (phone[0] === '+') userPhone = Number(phone.slice(1))
 
                 let user
 
                 try {
                         user = await User.findOne({ where: { phone } })
+                        if (!user) {
+
+                                user = await User.create({ name: 'Пользователь', phone: userPhone, password: `${hashPassword}` })
+                                return res.json({ result: message })
+
+                        }
+
+                } catch (error) {
+                        return next(ApiError.internal({ message: 'ошибка регистрации нового пользователя', error: error.message }))
+                }
+
+                try {
                         user.password = `${hashPassword}`
                         user.save()
 
@@ -176,7 +204,7 @@ class UserController {
                         return res.json({ result: message })
 
                 } catch (error) {
-                        return next(ApiError.internal({message: 'ошибка назначения временного пароля', error: error.message}))
+                        return next(ApiError.internal({ message: 'ошибка назначения временного пароля', error: error.message }))
                 }
         }
 
