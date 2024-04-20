@@ -134,19 +134,21 @@ class UserController {
         }
 
 
-        async deleteUser(req, res, next) {
+        async deleteOperator(req, res, next) {
 
                 const { id } = req.body
                 if (!id) return next(ApiError.badRequest({ message: 'проверьте данные id' }))
 
                 try {
-                        await User.destroy({
-                                where: {
-                                        id: id
-                                }
-                        })
+                        let user = await User.findByPk(id)
 
-                        return res.json({ result: "ok" })
+                        if(user.role === 'OPERATOR'){
+                                user.role = 'USER'
+                                user.save()
+                        }
+
+
+                        return res.json({ user })
                 } catch (error) {
                         return next(ApiError.internal({ message: 'ошибка удаления пользователя', error: error.message }))
                 }

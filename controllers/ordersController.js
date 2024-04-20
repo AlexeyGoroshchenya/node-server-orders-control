@@ -139,7 +139,7 @@ class OrdersController {
       const { userId } = req.query
       const orders = await Order.findAll({
         where: { userId: userId },
-        attributes: ['car', 'model', 'year', 'capacity', 'drive', 'type', 'status', 'id']
+        attributes: ['car', 'model', 'year', 'capacity', 'drive', 'type', 'status', 'id', 'description']
       })
 
       if (orders.length === 0) return next(ApiError.badRequest({message: 'заказы пользователя не найдены'}))
@@ -185,8 +185,6 @@ class OrdersController {
       
       const orders = await Order.findAndCountAll({where: {status}, limit, offset })
         
-        // attributes: ['car', 'model', 'year', 'capacity', 'drive', 'type', 'status']
-      
 
       if (orders.rows.length === 0) return next(ApiError.badRequest({message: 'заказы c таким статусом не найдены'}))
 

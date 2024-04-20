@@ -19,6 +19,6 @@ router.get('/getByRole', checkRole('ADMIN'), userController.getByRole)
 
 router.post('/send', userController.sendPassword)
 
-router.delete('/delete', checkRole('ADMIN'), userController.deleteUser)
+router.put('/delete', checkRole('ADMIN'), userController.deleteOperator)
 
 module.exports = router
