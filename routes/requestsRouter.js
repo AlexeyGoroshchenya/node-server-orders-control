@@ -15,6 +15,9 @@ router.get('/allRequests',  checkRole('OPERATOR'),  requestsController.getAllReq
 router.get('/getById',  checkRole('OPERATOR'),  requestsController.getById)
 router.get('/getByUserPhone',  checkRole('OPERATOR'),  requestsController.getByUserPhone)
 router.get('/getByStatus',  checkRole('OPERATOR'),  requestsController.getByStatus)
+ 
+router.get('/getBySearchParams', checkRole('OPERATOR'), requestsController.getBySearchParams)
+
 
 
 router.put('/',  checkRole('OPERATOR'),  requestsController.changeRequest)

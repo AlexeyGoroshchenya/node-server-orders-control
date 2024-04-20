@@ -148,7 +148,7 @@ class UserController {
                         }
 
 
-                        return res.json({ user })
+                        return res.json({ userRole: user.role })
                 } catch (error) {
                         return next(ApiError.internal({ message: 'ошибка удаления пользователя', error: error.message }))
                 }

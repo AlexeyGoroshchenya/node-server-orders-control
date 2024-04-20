@@ -131,5 +131,23 @@ class RequestsController {
     }
   }
 
+  async getBySearchParams(req, res, next) {
+
+    try {
+      const { searchParam } = req.query
+      const requests = await Request.findAll()
+
+      let searchedByPhone = requests.filter(request=> String(request.phone).toLowerCase().includes(searchParam.toLowerCase()))
+      let searchedByName = requests.filter(request=> request.name.toLowerCase().includes(searchParam.toLowerCase()))
+      
+
+      const searchResult = [...searchedByPhone, ...searchedByName]
+
+      return res.json(searchResult)
+    } catch (error) {
+      return next(ApiError.internal({message: 'ошибка получения заказов', error: error.message}))
+    }
+  }
+
 }
 module.exports = new RequestsController()

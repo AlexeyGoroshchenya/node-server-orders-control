@@ -53,7 +53,6 @@ class OrdersController {
   async getById(req, res, next) {
 
     try {
-
       const { id } = req.query
       const order = await Order.findOne({
         where: { id },
@@ -67,6 +66,30 @@ class OrdersController {
       return next(ApiError.internal({message: 'ошибка получения заказов', error: error.message}))
     }
   }
+
+  async getBySearchParams(req, res, next) {
+
+    try {
+      const { searchParam } = req.query
+      const orders = await Order.findAll()
+
+      let searchedById = orders.filter(order=> String(order.id).includes(searchParam))
+      let searchedByCar = orders.filter(order=> order.car.toLowerCase().includes(searchParam.toLowerCase()))
+      let searchedByModel = orders.filter(order=> order.model.toLowerCase().includes(searchParam.toLowerCase()))
+
+      const searchResult = [...searchedById, ...searchedByCar, ...searchedByModel]
+
+      return res.json(searchResult)
+    } catch (error) {
+      return next(ApiError.internal({message: 'ошибка получения заказов', error: error.message}))
+    }
+  }
+
+
+
+
+
+
 
   async changeOrder(req, res, next) {
     const { orderId, status, description } = req.body
