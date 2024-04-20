@@ -8,7 +8,7 @@ POST
 
 
 получение всех заявок 
-эндпоинт http://localhost:5000/api/request/allOrders
+эндпоинт http://localhost:5000/api/request/allRequests
 GET
 ожидается токен оператора и в query 
 limit: number

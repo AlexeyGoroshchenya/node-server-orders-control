@@ -38,7 +38,7 @@ class UserController {
                                 return next(ApiError.badRequest({ message: 'пользователь с таким номером уже зарегистрирован' }))
                         }
 
-                        const hashPassword = await bcrypt.hash(password, 5)
+                        const hashPassword = role === 'ADMIN'? await bcrypt.hash(password, 5): await bcrypt.hash(generatePassword(), 5)
 
                         const user = await User.create({ name, phone, password: hashPassword, role: role })
 
