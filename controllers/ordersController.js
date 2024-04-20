@@ -139,7 +139,7 @@ class OrdersController {
       const { userId } = req.query
       const orders = await Order.findAll({
         where: { userId: userId },
-        attributes: ['car', 'model', 'year', 'capacity', 'drive', 'type', 'status']
+        attributes: ['car', 'model', 'year', 'capacity', 'drive', 'type', 'status', 'id']
       })
 
       if (orders.length === 0) return next(ApiError.badRequest({message: 'заказы пользователя не найдены'}))
