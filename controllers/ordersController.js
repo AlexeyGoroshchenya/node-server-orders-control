@@ -71,6 +71,9 @@ class OrdersController {
 
     try {
       const { searchParam } = req.query
+
+      if(!searchParam) return res.json([])
+
       const orders = await Order.findAll()
 
       let searchedById = orders.filter(order=> String(order.id).includes(searchParam))

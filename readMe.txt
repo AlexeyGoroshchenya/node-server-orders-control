@@ -42,6 +42,11 @@ handled: boolean
 limit: number
 page: number
 
+получение заявок по поисковой строке
+http://localhost:5000/api/request/getBySearchParams
+ожидается токен оператора и в query строка.
+ищет по вхождению в поля phone, name. без учета регистра
+
 
 ******************************************
 
@@ -63,7 +68,7 @@ POST
 получение всех заказов 
 эндпоинт http://localhost:5000/api/order/allOrders
 GET
-ожидается токен админа и в query 
+ожидается токен оператора и в query 
 limit: number
 page: number
 
@@ -106,6 +111,14 @@ GET
 status: string (одно из значений name файла статусы, который сбрасывал ранеее)
 limit: number
 page: number
+
+получение заказов по поисковой строке
+http://localhost:5000/api/order/getBySearchParams
+ожидается токен оператора и в query строка.
+ищет по вхождению в поля id, car, model. без учета регистра
+
+
+
 
 ******************************************
 

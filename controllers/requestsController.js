@@ -135,6 +135,9 @@ class RequestsController {
 
     try {
       const { searchParam } = req.query
+
+      if(!searchParam) return res.json([])
+
       const requests = await Request.findAll()
 
       let searchedByPhone = requests.filter(request=> String(request.phone).toLowerCase().includes(searchParam.toLowerCase()))
