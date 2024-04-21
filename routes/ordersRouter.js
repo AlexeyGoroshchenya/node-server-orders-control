@@ -12,7 +12,9 @@ router.get('/getById', authMiddleware, ordersController.getById)
 router.get('/getByUserId', authMiddleware, ordersController.getByUserId)
 router.get('/getByUserPhone',  checkRole('OPERATOR'), ordersController.getByUserPhone)
 router.get('/getByStatus', authMiddleware, ordersController.getByStatus)
-router.get('/getBySearchParams',  checkRole('OPERATOR'), ordersController.getBySearchParams)
+
+checkRole('OPERATOR'),
+router.get('/getBySearchParams',   ordersController.getBySearchParams)
 
 
 

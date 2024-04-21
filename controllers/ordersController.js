@@ -72,15 +72,19 @@ class OrdersController {
     try {
       const { searchParam } = req.query
 
-      if(!searchParam) return res.json([])
-
       const orders = await Order.findAll()
+      if(!searchParam) return res.json(orders)
 
       let searchedById = orders.filter(order=> String(order.id).includes(searchParam))
       let searchedByCar = orders.filter(order=> order.car.toLowerCase().includes(searchParam.toLowerCase()))
       let searchedByModel = orders.filter(order=> order.model.toLowerCase().includes(searchParam.toLowerCase()))
 
-      const searchResult = [...searchedById, ...searchedByCar, ...searchedByModel]
+      let searchResult = [...searchedById, ...searchedByCar]
+      searchedByModel.forEach(result=>{
+        if(!searchResult.find(item=> item.id === result.id)){
+          searchResult.push(item)
+        }
+      })
 
       return res.json(searchResult)
     } catch (error) {
