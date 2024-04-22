@@ -48,13 +48,16 @@ class RequestsController {
 
   async getAllRequests(req, res, next) {
 
-    let { limit = 10, page = 1 } = req.query
+    let { limit = 2, page = 1 } = req.query
     let offset = page * limit - limit
 
     try {
-      const requests = await Request.findAndCountAll({ limit, offset })
 
-      return res.json(requests)
+      let requests = await Request.findAll()
+      let sortedResult = requests.reverse().slice(offset, page * limit )
+      // let requests = await Request.findAndCountAll({ limit, offset })
+
+      return res.json(sortedResult)
     } catch (error) {
       return next(ApiError.internal({message: 'ошибка получения заявок', error: error.message}))
     }
@@ -105,9 +108,11 @@ class RequestsController {
 
     try {
 
-      const requests = await Request.findAll({ where: { phone: userPhone } })
+      let requests = await Request.findAll({ where: { phone: userPhone } })
 
       if (requests.length === 0) return next(ApiError.badRequest({message: 'заявки пользователя не найдены'}))
+
+      requests.reverse()
 
       return res.json(requests)
     } catch (error) {
@@ -121,11 +126,15 @@ class RequestsController {
     let offset = page * limit - limit
 
     try {
-      const requests = await Request.findAndCountAll({where: {handled}, limit, offset })
 
+      // const requests = await Request.findAndCountAll({where: {handled}, limit, offset })
+
+      let requests = await Request.findAll({where: {handled}})
       if (requests.rows.length === 0) return next(ApiError.badRequest({message: 'заявки c таким статусом не найдены'}))
 
-      return res.json(requests)
+      let sortedResult = requests.reverse().slice(offset, page * limit )
+
+      return res.json(sortedResult)
     } catch (error) {
       return next(ApiError.internal({message: 'ошибка получения заявок', error: error.message}))
     }
@@ -143,6 +152,8 @@ class RequestsController {
       let searchedByName = requests.filter(request=> request.name.toLowerCase().includes(searchParam.toLowerCase()))
 
       const searchResult = [...searchedByPhone, ...searchedByName]
+      
+      searchResult.sort((a, b) => a.id < b.id ? 1 : -1)
 
       return res.json(searchResult)
     } catch (error) {

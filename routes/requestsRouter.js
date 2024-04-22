@@ -8,9 +8,7 @@ const router = new Router()
 
 router.post('/create', requestsController.createRequest)
 
-
 router.get('/allRequests',  checkRole('OPERATOR'),  requestsController.getAllRequests)
-
 
 router.get('/getById',  checkRole('OPERATOR'),  requestsController.getById)
 router.get('/getByUserPhone',  checkRole('OPERATOR'),  requestsController.getByUserPhone)
