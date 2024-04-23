@@ -8,17 +8,15 @@ const router = new Router()
 
 router.post('/create', requestsController.createRequest)
 
-router.get('/allRequests',  checkRole('OPERATOR'),  requestsController.getAllRequests)
+router.get('/allRequests',  authMiddleware, checkRole('OPERATOR'),  requestsController.getAllRequests)
 
-router.get('/getById',  checkRole('OPERATOR'),  requestsController.getById)
-router.get('/getByUserPhone',  checkRole('OPERATOR'),  requestsController.getByUserPhone)
-router.get('/getByStatus',  checkRole('OPERATOR'),  requestsController.getByStatus)
+router.get('/getById',  authMiddleware, checkRole('OPERATOR'),  requestsController.getById)
+router.get('/getByUserPhone',  authMiddleware, checkRole('OPERATOR'),  requestsController.getByUserPhone)
+router.get('/getByStatus',  authMiddleware, checkRole('OPERATOR'),  requestsController.getByStatus)
  
-router.get('/getBySearchParams', checkRole('OPERATOR'), requestsController.getBySearchParams)
+router.get('/getBySearchParams', authMiddleware, checkRole('OPERATOR'), requestsController.getBySearchParams)
 
-
-
-router.put('/',  checkRole('OPERATOR'),  requestsController.changeRequest)
+router.put('/',  authMiddleware, checkRole('OPERATOR'),  requestsController.changeRequest)
 
 
 

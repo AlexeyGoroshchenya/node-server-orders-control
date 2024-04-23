@@ -6,11 +6,11 @@ const authMiddleware = require('../middleware/AuthMiddleware')
 const router = new Router()
 
 
-router.post('/create', checkRole('OPERATOR'), ordersController.createOrder)
-router.get('/allOrders', checkRole('OPERATOR'), ordersController.getAllOrders)
+router.post('/create', authMiddleware, checkRole('OPERATOR'), ordersController.createOrder)
+router.get('/allOrders', authMiddleware, checkRole('OPERATOR'), ordersController.getAllOrders)
 router.get('/getById', authMiddleware, ordersController.getById)
 router.get('/getByUserId', authMiddleware, ordersController.getByUserId)
-router.get('/getByUserPhone',  checkRole('OPERATOR'), ordersController.getByUserPhone)
+router.get('/getByUserPhone',  authMiddleware, checkRole('OPERATOR'), ordersController.getByUserPhone)
 router.get('/getByStatus', authMiddleware, ordersController.getByStatus)
 
 checkRole('OPERATOR'),
