@@ -151,12 +151,12 @@ class RequestsController {
         requests = await Request.findAll({ where: { handled: handled } })
       }
 
-      count = requests.length
+
 
       if (!searchParam) {
         const sortedUnsearchedRequests = requests.reverse().slice(offset, page * limit)
-     
-        return res.json({count: count, rows: sortedUnsearchedRequests})
+        count = requests.length
+        return res.json({ count: count, rows: sortedUnsearchedRequests })
 
       } else {
 
@@ -164,8 +164,8 @@ class RequestsController {
         const searchedByName = requests.filter(request => request.name.toLowerCase().includes(searchParam.toLowerCase()))
         const searchResult = [...searchedByPhone, ...searchedByName]
         const sortedSearchResult = searchResult.sort((a, b) => a.id < b.id ? 1 : -1).slice(offset, page * limit)
-
-        return res.json({count: count, rows: sortedSearchResult})
+        count = sortedSearchResult.length
+        return res.json({ count: count, rows: sortedSearchResult })
       }
 
 
