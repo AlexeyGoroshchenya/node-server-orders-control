@@ -7,18 +7,21 @@ const router = new Router()
 
 
 router.post('/create', authMiddleware, checkRole('OPERATOR'), ordersController.createOrder)
+
 router.get('/allOrders', authMiddleware, checkRole('OPERATOR'), ordersController.getAllOrders)
 router.get('/getById', authMiddleware, ordersController.getById)
 router.get('/getByUserId', authMiddleware, ordersController.getByUserId)
 router.get('/getByUserPhone',  authMiddleware, checkRole('OPERATOR'), ordersController.getByUserPhone)
 router.get('/getByStatus', authMiddleware, ordersController.getByStatus)
-
-checkRole('OPERATOR'),
-router.get('/getBySearchParams',   ordersController.getBySearchParams)
+router.get('/getStatuses', ordersController.getStatuses)
 
 
 
-router.put('/', checkRole('OPERATOR'), ordersController.changeOrder)
+router.get('/getBySearchParams', authMiddleware, checkRole('OPERATOR'), ordersController.getBySearchParams)
+
+
+
+router.put('/', authMiddleware, checkRole('OPERATOR'), ordersController.changeOrder)
 
 
 

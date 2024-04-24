@@ -12,6 +12,7 @@ router.post('/registration', userController.registration)
 router.post('/login', userController.login)
 
 router.get('/auth', authMiddleware, userController.check)
+
 router.get('/getAll', authMiddleware, checkRole('ADMIN'), userController.getAll)
 router.get('/getUserByID', authMiddleware, checkRole('ADMIN'), userController.getUserByID)
 router.get('/getByRole', authMiddleware, checkRole('ADMIN'), userController.getByRole)

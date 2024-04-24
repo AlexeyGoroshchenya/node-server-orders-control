@@ -14,7 +14,7 @@ class RequestsController {
 
     //проверка телефона на формат?
 
-    if (!phone || !name) return next(ApiError.badRequest({ message: 'проверьте данные запроса' }))
+    if (!phone || !name) return next(ApiError.badRequest({ message: 'Проверьте данные запроса' }))
 
     let userPhone = Number(phone)
     if (phone[0] === '+') userPhone = Number(phone.slice(1))
@@ -42,7 +42,7 @@ class RequestsController {
 
       return res.json({ request })
     } catch (error) {
-      return next(ApiError.internal({ message: 'ошибка создания заявки', error: error.message }))
+      return next(ApiError.internal({ message: 'Ошибка создания заявки', error: error.message }))
     }
   }
 
@@ -55,11 +55,10 @@ class RequestsController {
 
       let requests = await Request.findAll()
       let sortedResult = requests.reverse().slice(offset, page * limit)
-      // let requests = await Request.findAndCountAll({ limit, offset })
 
       return res.json(sortedResult)
     } catch (error) {
-      return next(ApiError.internal({ message: 'ошибка получения заявок', error: error.message }))
+      return next(ApiError.internal({ message: 'Ошибка получения заявок', error: error.message }))
     }
   }
 
@@ -70,11 +69,11 @@ class RequestsController {
       const { id } = req.query
       const request = await Request.findOne({ where: { id } })
 
-      if (!request) return next(ApiError.badRequest({ message: 'заявка с таким id не найден' }))
+      if (!request) return next(ApiError.badRequest({ message: 'Заявка с таким id не найден' }))
 
       return res.json(request)
     } catch (error) {
-      return next(ApiError.internal({ message: 'ошибка получения заявок', error: error.message }))
+      return next(ApiError.internal({ message: 'Ошибка получения заявок', error: error.message }))
     }
   }
 
@@ -83,18 +82,18 @@ class RequestsController {
 
     try {
 
-      if (!requestId) return next(ApiError.badRequest({ message: 'проверьте id заявки' }))
-      if (typeof handled !== 'boolean') return next(ApiError.badRequest({ message: 'невправильный формат параметра: Обработано' }))
+      if (!requestId) return next(ApiError.badRequest({ message: 'Проверьте id заявки' }))
+      if (typeof handled !== 'boolean') return next(ApiError.badRequest({ message: 'Неправильный формат параметра: Обработано' }))
 
       const request = await Request.findByPk(requestId)
 
-      if (!request) return next(ApiError.badRequest({ message: 'заявка с таким id не найдена' }))
+      if (!request) return next(ApiError.badRequest({ message: 'Заявка с таким id не найдена' }))
       request.handled = handled
       request.save()
 
       return res.json(request)
     } catch (error) {
-      return next(ApiError.internal({ message: 'ошибка обновления сведений', error: error.message }))
+      return next(ApiError.internal({ message: 'Ошибка обновления сведений', error: error.message }))
     }
   }
 
@@ -102,7 +101,7 @@ class RequestsController {
 
     const { phone } = req.query
 
-    if (!phone) return next(ApiError.badRequest({ message: 'проверьте данные запроса' }))
+    if (!phone) return next(ApiError.badRequest({ message: 'Проверьте данные запроса' }))
     let userPhone = Number(phone)
     if (phone[0] === '+') userPhone = Number(phone.slice(1))
 
@@ -110,13 +109,13 @@ class RequestsController {
 
       let requests = await Request.findAll({ where: { phone: userPhone } })
 
-      if (requests.length === 0) return next(ApiError.badRequest({ message: 'заявки пользователя не найдены' }))
+      if (requests.length === 0) return next(ApiError.badRequest({ message: 'Заявки пользователя не найдены' }))
 
       requests.reverse()
 
       return res.json(requests)
     } catch (error) {
-      return next(ApiError.internal({ message: 'ошибка получения заявок', error: error.message }))
+      return next(ApiError.internal({ message: 'Ошибка получения заявок', error: error.message }))
     }
   }
 
@@ -127,16 +126,13 @@ class RequestsController {
 
     try {
 
-      // const requests = await Request.findAndCountAll({where: {handled}, limit, offset })
-
       let requests = await Request.findAll({ where: { handled: handled } })
-      // if (requests.rows?.length === 0) return next(ApiError.badRequest({message: 'заявки c таким статусом не найдены'}))
 
       let sortedResult = requests.reverse().slice(offset, page * limit)
 
       return res.json(sortedResult)
     } catch (error) {
-      return next(ApiError.internal({ message: 'ошибка получения заявок', error: error.message }))
+      return next(ApiError.internal({ message: 'Ошибка получения заявок', error: error.message }))
     }
   }
 
@@ -147,6 +143,7 @@ class RequestsController {
 
       let requests
       let offset = page * limit - limit
+      let count
 
       if (handled === undefined) {
         requests = await Request.findAll()
@@ -154,10 +151,12 @@ class RequestsController {
         requests = await Request.findAll({ where: { handled: handled } })
       }
 
+      count = requests.length
+
       if (!searchParam) {
         const sortedUnsearchedRequests = requests.reverse().slice(offset, page * limit)
      
-        return res.json(sortedUnsearchedRequests)
+        return res.json({count: count, rows: sortedUnsearchedRequests})
 
       } else {
 
@@ -166,14 +165,14 @@ class RequestsController {
         const searchResult = [...searchedByPhone, ...searchedByName]
         const sortedSearchResult = searchResult.sort((a, b) => a.id < b.id ? 1 : -1).slice(offset, page * limit)
 
-        return res.json(sortedSearchResult)
+        return res.json({count: count, rows: sortedSearchResult})
       }
 
 
 
 
     } catch (error) {
-      return next(ApiError.internal({ message: 'ошибка получения заказов', error: error.message }))
+      return next(ApiError.internal({ message: 'Ошибка получения заказов', error: error.message }))
     }
   }
 
