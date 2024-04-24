@@ -97,9 +97,10 @@ class OrdersController {
         }
       }
 
-      count = orders.length
+      
 
       if (!searchParam) {
+        count = orders.length
         const sortedUnsearchedOrders = orders.sort((a, b) => a.id < b.id ? 1 : -1).slice(offset, page * limit)
 
         return res.json({count: count, rows: sortedUnsearchedOrders})
@@ -116,6 +117,7 @@ class OrdersController {
         })
 
         const sortedSearchedOrders = searchResult.sort((a, b) => a.id < b.id ? 1 : -1).slice(offset, page * limit)
+        count = searchResult.length
 
         return res.json({count: count, rows: sortedSearchedOrders})
       }
