@@ -120,7 +120,7 @@ class RequestsController {
     }
   }
 
-  
+    
   async getByStatus(req, res, next) {
     const { handled, limit = 10, page = 1 } = req.query
     let offset = page * limit - limit
@@ -129,8 +129,8 @@ class RequestsController {
 
       // const requests = await Request.findAndCountAll({where: {handled}, limit, offset })
 
-      let requests = await Request.findAll({where: {handled}})
-      if (requests.rows.length === 0) return next(ApiError.badRequest({message: 'заявки c таким статусом не найдены'}))
+      let requests = await Request.findAll({where: {handled: handled}})
+      // if (requests.rows?.length === 0) return next(ApiError.badRequest({message: 'заявки c таким статусом не найдены'}))
 
       let sortedResult = requests.reverse().slice(offset, page * limit )
 
