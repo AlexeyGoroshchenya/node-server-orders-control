@@ -172,7 +172,7 @@ class OrdersController {
         //отправить смс
         const newStatus = statuses.find(item => item.name === status)
 
-        let message = newStatus.message //+ ' Перейти в личный кабинет: ' + process.env.LOGIN_LINK
+        let message = newStatus.message + ' Перейти в личный кабинет: ' + process.env.LOGIN_LINK
 
         smsc.send_sms({
           phones: [`${user.phone}`],
