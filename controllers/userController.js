@@ -32,13 +32,24 @@ class UserController {
                 }
 
                 try {
-
                         const candidate = await User.findOne({ where: { phone } })
                         if (candidate) {
-                                return next(ApiError.badRequest({ message: 'Пользователь с таким номером уже зарегистрирован' }))
+                                if (role === 'OPERATOR') {
+                                        if (candidate.role === role) {
+                                                return next(ApiError.badRequest({ message: 'Пользователь с таким номером уже зарегистрирован' }))
+                                        } else {
+                                                candidate.role = role
+                                                candidate.save()
+                                                const token = generateGWT(candidate.id, candidate.phone, candidate.role)
+
+                                                return res.json({ token })
+                                        }
+                                } else {
+                                        return next(ApiError.badRequest({ message: 'Пользователь с таким номером уже зарегистрирован' }))
+                                }
                         }
 
-                        const hashPassword = role === 'ADMIN'? await bcrypt.hash(password, 5): await bcrypt.hash(generatePassword(), 5)
+                        const hashPassword = role === 'ADMIN' ? await bcrypt.hash(password, 5) : await bcrypt.hash(generatePassword(), 5)
 
                         const user = await User.create({ name, phone, password: hashPassword, role: role })
 
@@ -111,13 +122,13 @@ class UserController {
                 let offset = page * limit - limit
 
                 try {
-                        const users = await User.findAndCountAll({where: {role}, limit, offset })
+                        const users = await User.findAndCountAll({ where: { role }, limit, offset })
 
                         return res.json({ users })
                 } catch (error) {
                         return next(ApiError.internal({ message: 'Ошибка получения пользователя', error: error.message }))
                 }
-        }        
+        }
 
         async getUserByID(req, res, next) {
 
@@ -142,7 +153,7 @@ class UserController {
                 try {
                         let user = await User.findByPk(id)
 
-                        if(user.role === 'OPERATOR'){
+                        if (user.role === 'OPERATOR') {
                                 user.role = 'USER'
                                 user.save()
                         }
