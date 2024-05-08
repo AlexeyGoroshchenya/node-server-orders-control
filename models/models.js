@@ -31,6 +31,12 @@ const Request = sequelize.define('request', {
     handled: {type: DataTypes.BOOLEAN, allowNull: true},
 })
 
+const Videos = sequelize.define('video', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    videoId: {type: DataTypes.STRING, allowNull: false},
+    title: {type: DataTypes.STRING(1000), allowNull: false},
+})
+
 
 User.hasMany(Order)
 Order.belongsTo(User)
@@ -40,5 +46,6 @@ module.exports = {
 
     User,
     Order,
-    Request
+    Request,
+    Videos
 }

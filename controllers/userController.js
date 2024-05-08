@@ -1,6 +1,6 @@
 const ApiError = require('../error/ApiError')
 var smsc = require('../smsc/smsc_api.js');
-const generatePassword = require('../utils/utils')
+const generatePassword = require('../utils/generatePassword')
 
 
 const bcrypt = require('bcrypt')
