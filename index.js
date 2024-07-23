@@ -33,7 +33,6 @@ app.get('/', (req, res) => {
 
 const getAllVideos = async () => {
 
-
     models.Videos.truncate()
 
     let allVideos
@@ -42,10 +41,8 @@ const getAllVideos = async () => {
         let response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${process.env.CHANNEL_ID}&maxResults=50&type=video&key=${process.env.API_KEY}`)
 
         allVideos = await response.json()
-        console.log(allVideos);
 
         if (allVideos.pageInfo.totalResults > allVideos.pageInfo.resultsPerPage) count = Math.floor(allVideos.pageInfo.totalResults / allVideos.pageInfo.resultsPerPage)
-        console.log(count);
 
         if (allVideos.nextPageToken) {
             let nextPageToken = json.nextPageToken
@@ -56,7 +53,6 @@ const getAllVideos = async () => {
                 let nextPage = await nextPageResponse.json()
 
                 nextPageToken = nextPage.nextPageToken
-                console.log(nextPage);
                 allVideos.items.push(...nextPage.items)
             }
         }
@@ -66,10 +62,14 @@ const getAllVideos = async () => {
     }
 
     try {
-        for (let index = 0; index < allVideos.items.length; index++) {
+        if(allVideos.items){
+           for (let index = 0; index < allVideos.items.length; index++) {
             const element = allVideos.items[index];
+            console.log(element);
             models.Videos.create({ videoId: element.id.videoId, title: element.snippet.title })
+        } 
         }
+        
     } catch (error) {
         console.log(error);
     }
