@@ -65,7 +65,7 @@ const getAllVideos = async () => {
         if(allVideos.items){
            for (let index = 0; index < allVideos.items.length; index++) {
             const element = allVideos.items[index];
-            console.log(element);
+            
             models.Videos.create({ videoId: element.id.videoId, title: element.snippet.title })
         } 
         }
