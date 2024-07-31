@@ -45,7 +45,7 @@ const getAllVideos = async () => {
         if (allVideos.pageInfo.totalResults > allVideos.pageInfo.resultsPerPage) count = Math.floor(allVideos.pageInfo.totalResults / allVideos.pageInfo.resultsPerPage)
 
         if (allVideos.nextPageToken) {
-            let nextPageToken = json.nextPageToken
+            let nextPageToken = allVideos.nextPageToken
             for (let index = 0; index < count; index++) {
 
                 let nextPageResponse = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${process.env.CHANNEL_ID}&maxResults=50&type=video&key=${process.env.API_KEY}&pageToken=${nextPageToken}`)
@@ -56,6 +56,7 @@ const getAllVideos = async () => {
                 allVideos.items.push(...nextPage.items)
             }
         }
+        
     } catch (error) {
         console.log(error);
 
