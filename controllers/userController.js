@@ -214,7 +214,7 @@ class UserController {
                                 )
                         });
 
-                        return res.json({ result: message })
+                        return res.json({ result: 'Пароль выслан на указанные номер' })
 
                 } catch (error) {
                         return next(ApiError.internal({ message: 'Ошибка назначения временного пароля', error: error.message }))
